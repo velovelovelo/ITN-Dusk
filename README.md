@@ -1,8 +1,5 @@
 ### ITN DUSK NETWOK
 
-# official guide
-https://docs.dusk.network/itn/node-running-guide/
-
 ### System Requirements ###
 - OS : Ubuntu 22.04
 - CPU : 2 Cores
