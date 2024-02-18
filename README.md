@@ -66,4 +66,57 @@ tail -F /var/log/rusk.log | grep "execute_state_transition"
 ### Note that this can take a while, given that your stake needs at least 2 epochs, or 4320 blocks, to mature. Your stake, relative to the total stake, also plays a factor.
 ### If everything went right, and your node starts accepting and creating blocks, you have succesfully set up your ITN node!
 
+# Manual resync
+
+# Steps to Resync Your Node
+
+run this command:
+```
+curl --location --request POST 'http://127.0.0.1:8080/02/Chain' --header 'Rusk-Version: 0.7.0-rc' --header 'Content-Type: application/json' --data-raw '{
+    "topic": "gql",
+    "data": "query { block(height: -1) { header { height } } }"
+}' | jq '.block.header.height'
+```
+
+If your node is confirmed to be stuck (e.g. at block 50636) or significantly behind the current block height, follow these steps to resync:
+# 1. Unstake (if applicable)
+If you are staked, the first step is to unstake to prevent any potential loss of stake due to node downtime:
+```
+rusk-wallet unstake
+```
+
+# 2.Stop the Rusk Service
+Stop the Rusk service to prevent any new data from being written to the database:
+```
+service rusk stop
+```
+
+# 3. Remove Chain Data and Cache
+Delete the existing chain database and cache to remove any potentially corrupt data:
+```
+rm -rf /opt/dusk/rusk/chain.db/
+rm -rf /opt/dusk/rusk/state/
+rm -rf ~/.dusk/rusk-wallet/cache*
+```
+
+# 4. Restart Rusk
+With the old data removed, restart the Rusk service to begin syncing from scratch:
+```
+service rusk start
+```
+
+# 5. Monitor Sync Progress
+Monitor the progress of your node’s sync by checking the last block accepted by your node:
+```
+curl --location --request POST 'http://127.0.0.1:8080/02/Chain' --header 'Rusk-Version: 0.7.0-rc' --header 'Content-Type: application/json' --data-raw '{
+    "topic": "gql",
+    "data": "query { block(height: -1) { header { height } } }"
+}' | jq '.block.header.height'
+```
+
+# 6. Restake (if applicable)
+Once your node is close to the current block height, you can restake your DUSK tokens:
+```
+rusk-wallet stake --amt 1000
+```
 
