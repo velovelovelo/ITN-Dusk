@@ -120,3 +120,20 @@ Once your node is close to the current block height, you can restake your DUSK t
 rusk-wallet stake --amt 1000
 ```
 
+# Node upgrade
+To upgrade to the latest ITN version, run:
+```
+curl --proto '=https' --tlsv1.2 -sSfL https://github.com/dusk-network/itn-installer/releases/download/v0.1.1/itn-installer.sh | sudo sh
+```
+
+Once it’s done and gives no errors, start Rusk again:
+```
+service rusk start
+```
+
+Keep an eye on the logs to see if it’s making and accepting new blocks:
+```
+tail -F /var/log/rusk.log
+```
+
+If you see new blocks being accepted, you’re up and running again. Is your node stuck, or are you not sure if it is? Check out the manual resync instructions.
